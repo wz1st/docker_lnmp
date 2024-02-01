@@ -1,0 +1,25 @@
+version: '2'
+services:
+  mysql:
+    image: mysql:5.6
+    ports:
+      - "3306:3306"
+    volumes:
+      - ./mysql/:/var/lib/mysql/ #save db data
+    environment:
+      - MYSQL_ROOT_PASSWORD=root
+    container_name : mysql_server
+  phpfpm: 
+    build: ./phpfpm
+    volumes:
+      - ./www/:/var/www/html/
+    restart: always
+  nginx:
+    image: nginx:latest
+    depends_on:
+      - "phpfpm"
+    ports:
+      - "80:80"
+    volumes:
+      - ./default.conf:/etc/nginx/conf.d/default.conf
+      - ./www/:/var/www/html/
